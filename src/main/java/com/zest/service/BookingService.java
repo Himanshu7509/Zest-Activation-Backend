@@ -16,22 +16,26 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final EventRepository eventRepository;
 
-    public Booking bookEvent(String userId, String eventId, int quantity) {
+    public Booking bookEvent(String userId, String eventId, Integer quantity) {
 
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+        Event event = eventRepository.findByEventId(eventId);
+        if (event == null) {
+            throw new RuntimeException("Event not found");
+        }
 
-        if (event.getAvailableSeats() < quantity) {
+        int qty = quantity != null ? quantity : 1;
+        
+        if (event.getAvailableSeats() == null || event.getAvailableSeats() < qty) {
             throw new RuntimeException("Not enough seats available");
         }
 
-        event.setAvailableSeats(event.getAvailableSeats() - quantity);
+        event.setAvailableSeats(event.getAvailableSeats() - qty);
         eventRepository.save(event);
 
         Booking booking = Booking.builder()
                 .eventId(eventId)
                 .userId(userId)
-                .quantity(quantity)
+                .quantity(qty)
                 .bookingTime(LocalDateTime.now())
                 .build();
 

@@ -20,7 +20,7 @@ public class BookingController {
     public Booking bookEvent(
             @PathVariable String userId,
             @PathVariable String eventId,
-            @RequestParam int quantity
+            @RequestParam Integer quantity
     ) {
         return bookingService.bookEvent(userId, eventId, quantity);
     }
