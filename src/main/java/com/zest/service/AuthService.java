@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.zest.dto.LoginRequest;
+import com.zest.dto.LoginResponse;
 import com.zest.dto.RegisterRequest;
 import com.zest.model.Role;
 import com.zest.model.User;
@@ -45,7 +46,7 @@ public class AuthService {
         return "User registered successfully";
     }
 
-    public String login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
@@ -54,7 +55,15 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return jwtUtil.generateToken(user);
+        String token = jwtUtil.generateToken(user);
+
+        return new LoginResponse(
+                "Login successful",
+                user.getUserId(),
+                user.getRole().name(),
+                token
+        );
     }
+
 }
 
