@@ -19,7 +19,8 @@ public class EventService {
 
         event.setEventId("EVT-" + UUID.randomUUID().toString().substring(0,8));
         event.setOrganizerId(organizerId);
-        event.setAvailableSeats(event.getTotalSeats());
+        Integer total = event.getTotalSeats();
+        event.setAvailableSeats(total != null ? total : 0);
         event.setCreatedAt(LocalDateTime.now());
 
         return eventRepository.save(event);

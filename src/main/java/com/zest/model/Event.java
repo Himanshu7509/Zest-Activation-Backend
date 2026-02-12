@@ -27,10 +27,10 @@ public class Event {
 
     private LocalDateTime eventDate;
 
-    private int totalSeats;
-    private int availableSeats;
+    private Integer totalSeats;
+    private Integer availableSeats;
 
-    private double price;
+    private Double price;
 
     private LocalDateTime createdAt;
 }
