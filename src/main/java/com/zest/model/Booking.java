@@ -23,4 +23,6 @@ public class Booking {
     private int quantity;
 
     private LocalDateTime bookingTime;
+    
+    private BookingStatus status;
 }

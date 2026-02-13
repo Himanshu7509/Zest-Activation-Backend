@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.zest.model.Booking;
+import com.zest.model.BookingStatus;
 import com.zest.model.Event;
 import com.zest.repository.BookingRepository;
 import com.zest.repository.EventRepository;
@@ -40,6 +41,7 @@ public class BookingService {
                 .userId(userId)
                 .quantity(qty)
                 .bookingTime(LocalDateTime.now())
+                .status(BookingStatus.CONFIRMED)
                 .build();
 
         return bookingRepository.save(booking);
@@ -48,4 +50,30 @@ public class BookingService {
     public List<Booking> getUserBookings(String userId) {
         return bookingRepository.findByUserId(userId);
     }
+    
+    public Booking cancelBooking(String bookingId, String userId) {
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+
+        if (!booking.getUserId().equals(userId)) {
+            throw new RuntimeException("You can only cancel your own booking");
+        }
+
+        if (booking.getStatus() == BookingStatus.CANCELLED) {
+            throw new RuntimeException("Booking already cancelled");
+        }
+
+        Event event = eventRepository.findById(booking.getEventId())
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        // Restore seats
+        event.setAvailableSeats(event.getAvailableSeats() + booking.getQuantity());
+        eventRepository.save(event);
+
+        booking.setStatus(BookingStatus.CANCELLED);
+
+        return bookingRepository.save(booking);
+    }
+
 }

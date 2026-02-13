@@ -30,4 +30,13 @@ public class BookingController {
     public List<Booking> getUserBookings(@PathVariable String userId) {
         return bookingService.getUserBookings(userId);
     }
+    
+    @PutMapping("/cancel/{bookingId}/{userId}")
+    public Booking cancelBooking(
+            @PathVariable String bookingId,
+            @PathVariable String userId
+    ) {
+        return bookingService.cancelBooking(bookingId, userId);
+    }
+
 }
