@@ -37,7 +37,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/events").permitAll()
-                .requestMatchers("/api/bookings/all").hasAuthority("ORGANIZER")
+                .requestMatchers("/api/bookings/all").hasRole("ORGANIZER")
                 .requestMatchers("/api/bookings/**").hasRole("USER")
                 .anyRequest().authenticated()
             )
