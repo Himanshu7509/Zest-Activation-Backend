@@ -51,7 +51,7 @@ public class BookingService {
         return bookingRepository.findByUserId(userId);
     }
     
-    public Booking cancelBooking(String bookingId, String userId) {
+     public Booking cancelBooking(String bookingId, String userId) {
 
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
@@ -64,8 +64,11 @@ public class BookingService {
             throw new RuntimeException("Booking already cancelled");
         }
 
-        Event event = eventRepository.findById(booking.getEventId())
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+        // Use findByEventId instead of findById since booking.eventId is the custom eventId, not the MongoDB _id
+        Event event = eventRepository.findByEventId(booking.getEventId());
+        if (event == null) {
+            throw new RuntimeException("Event not found with ID: " + booking.getEventId());
+        }
 
         // Restore seats
         event.setAvailableSeats(event.getAvailableSeats() + booking.getQuantity());
