@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 public class Event {
 
     @Id
-    private String id; // MongoDB internal id
+    private String id; 
 
-    private String eventId; // Unique readable ID (EVT-XXXXX)
+    private String eventId; 
 
-    private String organizerId; // linked to User.userId
+    private String organizerId; 
 
     private String title;
     private String description;
