@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class EventController {
 
     private final EventService eventService;
-    private EventImageS3Service eventImageS3Service;
+    private final EventImageS3Service eventImageS3Service;
 
     // Organizer create event
     @PostMapping("/{organizerId}")
