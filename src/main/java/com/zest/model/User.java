@@ -26,7 +26,7 @@ public class User {
 
     private Boolean isActive = true;
 
-    private Boolean approved = true;
+    private Boolean approved = false;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 }
