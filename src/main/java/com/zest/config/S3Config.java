@@ -1,6 +1,7 @@
 package com.zest.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,17 +13,15 @@ import software.amazon.awssdk.services.s3.S3Client;
 @Configuration
 public class S3Config {
 
-    @Value("${aws.access-key}")
-    private String accessKey;
-
-    @Value("${aws.secret-key}")
-    private String secretKey;
-
-    @Value("${aws.region}")
-    private String region;
-
     @Bean
-    public S3Client s3Client() {
+    @ConditionalOnProperty(
+        name = "aws.access-key",
+        matchIfMissing = false
+    )
+    public S3Client s3Client(
+            @Value("${aws.access-key}") String accessKey,
+            @Value("${aws.secret-key}") String secretKey,
+            @Value("${aws.region}") String region) {
 
         AwsBasicCredentials credentials =
                 AwsBasicCredentials.create(accessKey, secretKey);

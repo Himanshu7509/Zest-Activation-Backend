@@ -3,6 +3,7 @@ package com.zest.controller;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,9 @@ import lombok.RequiredArgsConstructor;
 public class EventController {
 
     private final EventService eventService;
-    private final EventImageS3Service eventImageS3Service;
+    
+    @Autowired(required = false)
+    private EventImageS3Service eventImageS3Service;
 
     // Organizer create event
     @PostMapping("/{organizerId}")
@@ -41,6 +44,10 @@ public class EventController {
             @RequestParam("file") MultipartFile file
     ) throws IOException {
 
+        if (eventImageS3Service == null) {
+            return ResponseEntity.status(503).body("Image upload service is not available");
+        }
+        
         eventImageS3Service.uploadAndSaveEventImage(file, eventId);
 
         return ResponseEntity.ok("Image uploaded successfully");
