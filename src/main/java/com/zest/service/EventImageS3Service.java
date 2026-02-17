@@ -25,7 +25,7 @@ public class EventImageS3Service {
     private final S3Client s3Client;
     private final EventRepository eventRepository;
 
-    @Value("${aws.s3.bucket}")
+    @Value("${aws.s3.bucket-name}")
     private String bucketName;
 
     private static final String IMAGE_FOLDER = "zest/events/";
