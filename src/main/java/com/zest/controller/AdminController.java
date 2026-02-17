@@ -4,8 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zest.model.Booking;
@@ -77,4 +82,68 @@ public class AdminController {
 
         return dashboard;
     }
+
+    // 1️⃣ Block / Unblock User
+    @PutMapping("/users/{id}/block")
+    public ResponseEntity<String> toggleBlockUser(@PathVariable String id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setIsActive(!user.getIsActive());
+        userRepository.save(user);
+
+        return ResponseEntity.ok("User block status updated");
+    }
+
+    // 2️⃣ Approve Organizer
+    @PutMapping("/organizers/{id}/approve")
+    public ResponseEntity<String> approveOrganizer(@PathVariable String id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.getRole().name().equals("ORGANIZER")) {
+            return ResponseEntity.badRequest().body("User is not an organizer");
+        }
+
+        user.setApproved(true);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Organizer approved successfully");
+    }
+
+    // 3️⃣ Delete Event
+    @DeleteMapping("/events/{id}")
+    public ResponseEntity<String> deleteEvent(@PathVariable String id) {
+
+        if (!eventRepository.existsById(id)) {
+            throw new RuntimeException("Event not found");
+        }
+
+        eventRepository.deleteById(id);
+
+        return ResponseEntity.ok("Event deleted successfully");
+    }
+
+    // 4️⃣ Change Event Status
+    @PutMapping("/events/{id}/status")
+    public ResponseEntity<String> changeEventStatus(
+            @PathVariable String id,
+            @RequestParam String status) {
+
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        if (!status.equals("ACTIVE") && !status.equals("CANCELLED")) {
+            return ResponseEntity.badRequest()
+                    .body("Status must be ACTIVE or CANCELLED");
+        }
+
+        event.setStatus(status);
+        eventRepository.save(event);
+
+        return ResponseEntity.ok("Event status updated");
+    }
+
 }

@@ -55,6 +55,16 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
+        if (Boolean.FALSE.equals(user.getIsActive())) {
+        throw new RuntimeException("Your account is blocked by admin");
+    }
+
+    if (user.getRole() == Role.ORGANIZER &&
+        Boolean.FALSE.equals(user.getApproved())) {
+
+        throw new RuntimeException("Organizer not approved by admin yet");
+    }
+
         String token = jwtUtil.generateToken(user);
 
         return new LoginResponse(

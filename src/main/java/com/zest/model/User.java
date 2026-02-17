@@ -24,8 +24,10 @@ public class User {
 
     private Role role;
 
-    private Boolean isActive;
+    private Boolean isActive = true;
 
-    private LocalDateTime createdAt;
+    private Boolean approved = true;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
 
