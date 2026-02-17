@@ -20,6 +20,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final EventImageS3Service eventImageS3Service;
 
     public Event createEvent(Event event, String organizerId) {
 
@@ -69,15 +70,19 @@ public class EventService {
     // Delete Event
     public void deleteEvent(String eventId) {
 
-    Event event = eventRepository.findByEventId(eventId);
+        Event event = eventRepository.findByEventId(eventId);
 
-    if (event == null) {
-        throw new RuntimeException("Event not found");
+        if (event == null) {
+            throw new RuntimeException("Event not found");
+        }
+
+        // 🔥 Delete S3 image first
+        eventImageS3Service.deleteEventImage(eventId);
+
+        // Soft delete
+        event.setIsDeleted(true);
+        eventRepository.save(event);
     }
-
-    event.setIsDeleted(true);
-    eventRepository.save(event);
-}
 
 
 }

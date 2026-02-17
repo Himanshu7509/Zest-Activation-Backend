@@ -35,6 +35,10 @@ public class Event {
      private String status = "PENDING";
 
     private Boolean isDeleted = false;
+    
+    private String imageUrl;
+    
+    private String imageS3Key;
 
     private LocalDateTime createdAt;
 }
