@@ -22,8 +22,7 @@ public class EventService {
     private final UserRepository userRepository;
 
     public Event createEvent(Event event, String organizerId) {
-        
-    // 1️⃣ Validate Organizer
+
     User organizer = userRepository.findById(organizerId)
             .orElseThrow(() -> new RuntimeException("Organizer not found"));
 
@@ -31,28 +30,22 @@ public class EventService {
         throw new RuntimeException("Only organizers can create events");
     }
 
-    if (Boolean.FALSE.equals(organizer.getApproved())) {
-        throw new RuntimeException("Organizer not approved by admin");
-    }
-
     if (Boolean.FALSE.equals(organizer.getIsActive())) {
         throw new RuntimeException("Organizer account is blocked");
     }
 
-    // 2️⃣ Set Event Fields
     event.setEventId("EVT-" + UUID.randomUUID().toString().substring(0, 8));
     event.setOrganizerId(organizerId);
 
     Integer total = event.getTotalSeats();
     event.setAvailableSeats(total != null ? total : 0);
 
-    event.setStatus("ACTIVE");
+    event.setStatus("PENDING");   // 🔥 important
     event.setIsDeleted(false);
     event.setCreatedAt(LocalDateTime.now());
 
     return eventRepository.save(event);
 }
-
 
     // Get All Events
     public List<Event> getAllEvents() {

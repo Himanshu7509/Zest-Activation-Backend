@@ -32,9 +32,9 @@ public class Event {
 
     private Double price;
 
-     private String status = "ACTIVE";   // ACTIVE / CANCELLED
+     private String status = "PENDING";
 
-    private Boolean isDeleted = false;  // soft delete flag
+    private Boolean isDeleted = false;
 
     private LocalDateTime createdAt;
 }

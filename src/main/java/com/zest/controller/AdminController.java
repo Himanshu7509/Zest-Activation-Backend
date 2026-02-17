@@ -51,8 +51,14 @@ public class AdminController {
 
     @GetMapping("/events")
     public List<Event> getAllEvents() {
-        return eventRepository.findAll();
-    }
+
+    return eventRepository.findAll()
+            .stream()
+            .filter(event -> 
+                "ACTIVE".equals(event.getStatus()) &&
+                Boolean.FALSE.equals(event.getIsDeleted()))
+            .toList();
+}
     
     @GetMapping("/bookings")
     public List<Booking> getAllBookings() {
@@ -98,22 +104,20 @@ public class AdminController {
         return ResponseEntity.ok("User block status updated");
     }
 
-    // 2️⃣ Approve Organizer
-    @PutMapping("/organizers/{id}/approve")
-    public ResponseEntity<String> approveOrganizer(@PathVariable String id) {
+   @PutMapping("/events/{eventId}/approve")
+   public ResponseEntity<String> approveEvent(@PathVariable String eventId) {
 
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    Event event = eventRepository.findByEventId(eventId);
 
-        if (!user.getRole().name().equals("ORGANIZER")) {
-            return ResponseEntity.badRequest().body("User is not an organizer");
-        }
-
-        user.setApproved(true);
-        userRepository.save(user);
-
-        return ResponseEntity.ok("Organizer approved successfully");
+    if (event == null) {
+        throw new RuntimeException("Event not found");
     }
+
+    event.setStatus("ACTIVE");
+    eventRepository.save(event);
+
+    return ResponseEntity.ok("Event approved successfully");
+}
 
     // 3️⃣ Delete Event
     @DeleteMapping("/events/{id}")
@@ -147,5 +151,21 @@ public class AdminController {
 
         return ResponseEntity.ok("Event status updated");
     }
+
+    @PutMapping("/events/{eventId}/reject")
+   public ResponseEntity<String> rejectEvent(@PathVariable String eventId) {
+
+    Event event = eventRepository.findByEventId(eventId);
+
+    if (event == null) {
+        throw new RuntimeException("Event not found");
+    }
+
+    event.setStatus("REJECTED");
+    eventRepository.save(event);
+
+    return ResponseEntity.ok("Event rejected successfully");
+}
+
 
 }

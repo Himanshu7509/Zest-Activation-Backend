@@ -20,32 +20,49 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final EventRepository eventRepository;
 
-    public Booking bookEvent(String userId, String eventId, Integer quantity) {
 
-        Event event = eventRepository.findByEventId(eventId);
-        if (event == null) {
-            throw new RuntimeException("Event not found");
-        }
+   public Booking bookEvent(String userId, String eventId, Integer quantity) {
 
-        int qty = quantity != null ? quantity : 1;
-        
-        if (event.getAvailableSeats() == null || event.getAvailableSeats() < qty) {
-            throw new RuntimeException("Not enough seats available");
-        }
+    // 1️⃣ Find Event
+    Event event = eventRepository.findByEventId(eventId);
 
-        event.setAvailableSeats(event.getAvailableSeats() - qty);
-        eventRepository.save(event);
-
-        Booking booking = Booking.builder()
-                .eventId(eventId)
-                .userId(userId)
-                .quantity(qty)
-                .bookingTime(LocalDateTime.now())
-                .status(BookingStatus.CONFIRMED)
-                .build();
-
-        return bookingRepository.save(booking);
+    if (event == null) {
+        throw new RuntimeException("Event not found");
     }
+
+    // 2️⃣ Prevent booking if deleted
+    if (Boolean.TRUE.equals(event.getIsDeleted())) {
+        throw new RuntimeException("Event is no longer available");
+    }
+
+    // 3️⃣ Only ACTIVE events can be booked
+    if (!"ACTIVE".equals(event.getStatus())) {
+        throw new RuntimeException("Event is not approved for booking");
+    }
+
+    // 4️⃣ Validate quantity
+    int qty = (quantity != null && quantity > 0) ? quantity : 1;
+
+    if (event.getAvailableSeats() == null || event.getAvailableSeats() < qty) {
+        throw new RuntimeException("Not enough seats available");
+    }
+
+    // 5️⃣ Reduce seats
+    event.setAvailableSeats(event.getAvailableSeats() - qty);
+    eventRepository.save(event);
+
+    // 6️⃣ Create booking
+    Booking booking = Booking.builder()
+            .eventId(eventId)
+            .userId(userId)
+            .quantity(qty)
+            .bookingTime(LocalDateTime.now())
+            .status(BookingStatus.CONFIRMED)
+            .build();
+
+    return bookingRepository.save(booking);
+}
+
 
     public List<Booking> getUserBookings(String userId) {
         return bookingRepository.findByUserId(userId);
