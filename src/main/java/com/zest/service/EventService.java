@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zest.model.Event;
@@ -20,7 +21,10 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-    private final EventImageS3Service eventImageS3Service;
+    
+    // Optional dependency - may be null if S3 is not configured
+    @Autowired(required = false)
+    private EventImageS3Service eventImageS3Service;
 
     public Event createEvent(Event event, String organizerId) {
 
@@ -76,8 +80,10 @@ public class EventService {
             throw new RuntimeException("Event not found");
         }
 
-        // 🔥 Delete S3 image first
-        eventImageS3Service.deleteEventImage(eventId);
+        // 🔥 Delete S3 image first if S3 service is available
+        if (eventImageS3Service != null) {
+            eventImageS3Service.deleteEventImage(eventId);
+        }
 
         // Soft delete
         event.setIsDeleted(true);
