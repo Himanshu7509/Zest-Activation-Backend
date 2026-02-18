@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zest.model.Event;
@@ -38,7 +40,7 @@ public class EventController {
         return eventService.createEvent(event, organizerId);
     }
     
-    @PostMapping("/{eventId}/image")
+    @PostMapping(value = "/{eventId}/image", consumes = {"multipart/form-data"})
     public ResponseEntity<String> uploadEventImage(
             @PathVariable String eventId,
             @RequestParam("file") MultipartFile file
@@ -69,5 +71,11 @@ public class EventController {
     @DeleteMapping("/{eventId}")
     public void deleteEvent(@PathVariable String eventId) {
         eventService.deleteEvent(eventId);
+    }
+    
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<String> handleMultipartException(MultipartException ex) {
+        return ResponseEntity.badRequest()
+            .body("Invalid request: Please ensure the request is sent as multipart/form-data with a 'file' parameter");
     }
 }
