@@ -36,6 +36,8 @@ public class Event {
 
     private Boolean isDeleted = false;
     
+    // Note: Image information is now stored separately in Image collection
+    // These fields are kept for backward compatibility
     private String imageUrl;
     
     private String imageS3Key;
