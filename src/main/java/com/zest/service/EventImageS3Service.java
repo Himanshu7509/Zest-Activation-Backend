@@ -3,7 +3,6 @@ package com.zest.service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +30,7 @@ public class EventImageS3Service {
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
 
-    private static final String IMAGE_FOLDER = "zest/events/";
+    private static final String IMAGE_FOLDER = "Zest/events/";
 
     // ✅ Upload / Replace Event Image
     public void uploadAndSaveEventImage(
