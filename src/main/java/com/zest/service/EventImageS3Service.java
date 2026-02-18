@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zest.model.Event;
-import com.zest.model.Image;
 import com.zest.repository.EventRepository;
-import com.zest.repository.ImageRepository;
 
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -29,7 +27,6 @@ public class EventImageS3Service {
 
     private final S3Client s3Client;
     private final EventRepository eventRepository;
-    private final ImageRepository imageRepository;
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
@@ -51,19 +48,14 @@ public class EventImageS3Service {
             throw new RuntimeException("Event not found");
         }
 
-        // 🔥 Check for existing image and delete from S3 if exists
-        List<Image> existingImages = imageRepository.findByEntityIdAndEntityType(eventId, "EVENT");
-        for (Image existingImage : existingImages) {
-            if (existingImage.getImageS3Key() != null) {
-                s3Client.deleteObject(
-                        DeleteObjectRequest.builder()
-                                .bucket(bucketName)
-                                .key(existingImage.getImageS3Key())
-                                .build()
-                );
-                // Delete the old image record
-                imageRepository.deleteById(existingImage.getId());
-            }
+        // 🔥 Delete old image from S3 if exists
+        if (event.getImageS3Key() != null) {
+            s3Client.deleteObject(
+                    DeleteObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(event.getImageS3Key())
+                            .build()
+            );
         }
 
         // 🔥 Create new S3 key
@@ -88,41 +80,38 @@ public class EventImageS3Service {
                         + ".s3." + s3Client.serviceClientConfiguration().region().id()
                         + ".amazonaws.com/" + s3Key;
 
-        // 🔥 Create and save Image entity
-        Image image = Image.builder()
-                .entityId(eventId)
-                .entityType("EVENT")
-                .imageUrl(imageUrl)
-                .imageS3Key(s3Key)
-                .fileName(file.getOriginalFilename())
-                .contentType(file.getContentType())
-                .fileSize(file.getSize())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
+        // 🔥 Update Event with image information
+        event.setImageUrl(imageUrl);
+        event.setImageS3Key(s3Key);
+        event.setCreatedAt(LocalDateTime.now());
 
-        imageRepository.save(image);
+        eventRepository.save(event);
     }
 
     // ✅ Delete image when event deleted
     @Transactional
     public void deleteEventImage(String eventId) {
 
-        // Find and delete the image record
-        List<Image> images = imageRepository.findByEntityIdAndEntityType(eventId, "EVENT");
+        Event event = eventRepository.findByEventId(eventId);
         
-        for (Image image : images) {
-            if (image.getImageS3Key() != null) {
-                s3Client.deleteObject(
-                        DeleteObjectRequest.builder()
-                                .bucket(bucketName)
-                                .key(image.getImageS3Key())
-                                .build()
-                );
-            }
-            // Delete the image record from database
-            imageRepository.deleteById(image.getId());
+        if (event == null) {
+            throw new RuntimeException("Event not found");
         }
+
+        // Delete image from S3 if exists
+        if (event.getImageS3Key() != null) {
+            s3Client.deleteObject(
+                    DeleteObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(event.getImageS3Key())
+                            .build()
+            );
+        }
+        
+        // Clear image information from event
+        event.setImageUrl(null);
+        event.setImageS3Key(null);
+        eventRepository.save(event);
     }
 
     // ✅ File validation
