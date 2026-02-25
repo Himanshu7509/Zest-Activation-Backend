@@ -1,6 +1,7 @@
 package com.zest.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -75,5 +76,28 @@ public class AuthService {
         );
     }
 
+    public String createAdminUser() {
+        // Check if admin already exists
+        List<User> admins = userRepository.findByRole(Role.ADMIN);
+        if (!admins.isEmpty()) {
+            throw new RuntimeException("Admin user already exists");
+        }
+
+        // Use a default password
+        String defaultPassword = "admin123";
+        
+        User admin = new User();
+        admin.setName("Admin User");
+        admin.setEmail("admin@zest.com");
+        admin.setPassword(passwordEncoder.encode(defaultPassword));
+        admin.setRole(Role.ADMIN);
+        admin.setIsActive(true);
+        admin.setApproved(true);
+        admin.setCreatedAt(LocalDateTime.now());
+        
+        userRepository.save(admin);
+        
+        return "Admin user created successfully. Email: admin@zest.com, Password: " + defaultPassword;
+    }
 }
 
