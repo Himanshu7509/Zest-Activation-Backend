@@ -24,6 +24,9 @@ public class EmailService {
     private String fromEmail;
 
     public boolean sendEmail(String toEmail, String subject, String content) {
+        log.info("Attempting to send email. API Key present: {}, From email: {}", 
+                 apiKey != null && !apiKey.isEmpty(), fromEmail);
+        
         try {
             // Create the mail object using the constructor that accepts all parameters
             Email from = new Email(fromEmail);
@@ -39,6 +42,7 @@ public class EmailService {
             request.setBody(mail.build());
 
             Response response = sg.api(request);
+             log.info("SendGrid response status: {}", response.getStatusCode());
             return response.getStatusCode() >= 200 && response.getStatusCode() < 300;
         } catch (Exception e) {
             log.error("Error sending email to: {}. Exception type: {}, Message: {}", toEmail, e.getClass().getSimpleName(), e.getMessage(), e);
