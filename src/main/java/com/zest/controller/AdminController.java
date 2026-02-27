@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,6 +69,29 @@ public class AdminController {
     @GetMapping("/bookings")
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
+    }
+
+    @PostMapping("/test-email")
+    public ResponseEntity<String> testEmail(@RequestParam String email) {
+        log.info("Testing email functionality to: {}", email);
+        
+        // Test SendGrid API key availability
+        if (emailService == null) {
+            log.error("EmailService is null");
+            return ResponseEntity.status(500).body("Email service not available");
+        }
+        
+        try {
+            boolean result = emailService.sendRegistrationConfirmation(email, "Test User");
+            if (result) {
+                return ResponseEntity.ok("Test email sent successfully");
+            } else {
+                return ResponseEntity.status(500).body("Failed to send test email");
+            }
+        } catch (Exception e) {
+            log.error("Exception in test email: ", e);
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
     }
 
     @GetMapping("/dashboard")
