@@ -23,10 +23,13 @@ import com.zest.repository.UserRepository;
 import com.zest.service.EmailService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
+@Slf4j
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
@@ -121,7 +124,13 @@ public class AdminController {
     // Get the organizer to send email notification
     User organizer = userRepository.findById(event.getOrganizerId()).orElse(null);
     if (organizer != null) {
-        emailService.sendEventApprovalNotification(organizer.getEmail(), event.getTitle(), event.getEventId());
+        log.info("Triggering event approval notification email for: {}", organizer.getEmail());
+        boolean emailSent = emailService.sendEventApprovalNotification(organizer.getEmail(), event.getTitle(), event.getEventId());
+        if (emailSent) {
+            log.info("Event approval notification sent successfully to: {}", organizer.getEmail());
+        } else {
+            log.warn("Failed to send event approval notification to: {}", organizer.getEmail());
+        }
     }
 
     return ResponseEntity.ok("Event approved successfully");
@@ -175,7 +184,13 @@ public class AdminController {
     // Get the organizer to send email notification
     User organizer = userRepository.findById(event.getOrganizerId()).orElse(null);
     if (organizer != null) {
-        emailService.sendEventRejectionNotification(organizer.getEmail(), event.getTitle(), event.getEventId());
+        log.info("Triggering event rejection notification email for: {}", organizer.getEmail());
+        boolean emailSent = emailService.sendEventRejectionNotification(organizer.getEmail(), event.getTitle(), event.getEventId());
+        if (emailSent) {
+            log.info("Event rejection notification sent successfully to: {}", organizer.getEmail());
+        } else {
+            log.warn("Failed to send event rejection notification to: {}", organizer.getEmail());
+        }
     }
 
     return ResponseEntity.ok("Event rejected successfully");

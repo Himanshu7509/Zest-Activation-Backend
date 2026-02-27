@@ -15,9 +15,11 @@ import com.zest.repository.UserRepository;
 import com.zest.security.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -46,7 +48,13 @@ public class AuthService {
         userRepository.save(user);
 
         // Send registration confirmation email
-        emailService.sendRegistrationConfirmation(user.getEmail(), user.getName());
+        log.info("Triggering registration confirmation email for: {}", user.getEmail());
+        boolean emailSent = emailService.sendRegistrationConfirmation(user.getEmail(), user.getName());
+        if (emailSent) {
+            log.info("Registration confirmation email sent successfully to: {}", user.getEmail());
+        } else {
+            log.warn("Failed to send registration confirmation email to: {}", user.getEmail());
+        }
 
         return "User registered successfully";
     }
