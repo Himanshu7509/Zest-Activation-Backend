@@ -11,7 +11,10 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class EmailService {
 
     @Value("${sendgrid.api.key}")
@@ -38,7 +41,7 @@ public class EmailService {
             Response response = sg.api(request);
             return response.getStatusCode() >= 200 && response.getStatusCode() < 300;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error sending email to: {}. Exception type: {}, Message: {}", toEmail, e.getClass().getSimpleName(), e.getMessage(), e);
             return false;
         }
     }
