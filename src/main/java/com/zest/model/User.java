@@ -29,5 +29,13 @@ public class User {
     private Boolean approved = true;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+    
+    // Profile fields
+    private String profileImageUrl;
+    private String profileImageS3Key;
+    private String phoneNumber;
+    private String bio;
+    private String location;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 }
 
