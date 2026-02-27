@@ -23,6 +23,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
 
     public String register(RegisterRequest request) {
 
@@ -43,6 +44,9 @@ public class AuthService {
         user.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(user);
+
+        // Send registration confirmation email
+        emailService.sendRegistrationConfirmation(user.getEmail(), user.getName());
 
         return "User registered successfully";
     }

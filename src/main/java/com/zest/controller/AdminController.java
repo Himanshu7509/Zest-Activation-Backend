@@ -20,6 +20,7 @@ import com.zest.model.User;
 import com.zest.repository.BookingRepository;
 import com.zest.repository.EventRepository;
 import com.zest.repository.UserRepository;
+import com.zest.service.EmailService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +33,7 @@ public class AdminController {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final BookingRepository bookingRepository;
+    private final EmailService emailService;
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
@@ -115,6 +117,12 @@ public class AdminController {
 
     event.setStatus("ACTIVE");
     eventRepository.save(event);
+    
+    // Get the organizer to send email notification
+    User organizer = userRepository.findById(event.getOrganizerId()).orElse(null);
+    if (organizer != null) {
+        emailService.sendEventApprovalNotification(organizer.getEmail(), event.getTitle(), event.getEventId());
+    }
 
     return ResponseEntity.ok("Event approved successfully");
 }
@@ -163,6 +171,12 @@ public class AdminController {
 
     event.setStatus("REJECTED");
     eventRepository.save(event);
+    
+    // Get the organizer to send email notification
+    User organizer = userRepository.findById(event.getOrganizerId()).orElse(null);
+    if (organizer != null) {
+        emailService.sendEventRejectionNotification(organizer.getEmail(), event.getTitle(), event.getEventId());
+    }
 
     return ResponseEntity.ok("Event rejected successfully");
 }

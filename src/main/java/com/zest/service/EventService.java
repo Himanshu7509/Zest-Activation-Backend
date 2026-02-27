@@ -13,18 +13,22 @@ import com.zest.model.User;
 import com.zest.repository.EventRepository;
 import com.zest.repository.UserRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
     
     // Optional dependency - may be null if S3 is not configured
     @Autowired(required = false)
     private EventImageS3Service eventImageS3Service;
+    
+    public EventService(EventRepository eventRepository, UserRepository userRepository, EmailService emailService) {
+        this.eventRepository = eventRepository;
+        this.userRepository = userRepository;
+        this.emailService = emailService;
+    }
 
     public Event createEvent(Event event, String organizerId) {
 
