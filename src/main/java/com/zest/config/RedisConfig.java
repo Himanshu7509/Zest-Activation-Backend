@@ -1,6 +1,7 @@
 package com.zest.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -18,6 +19,7 @@ import java.time.Duration;
 
 @Configuration
 @EnableCaching
+@ConditionalOnClass(RedisConnectionFactory.class)
 @ConditionalOnProperty(
     name = "spring.cache.type",
     havingValue = "redis",
