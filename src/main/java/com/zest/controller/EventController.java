@@ -61,6 +61,12 @@ public class EventController {
         return eventService.getAllEvents();
     }
 
+    // Public view event by ID
+    @GetMapping("/{eventId}")
+    public Event getEventById(@PathVariable String eventId) {
+        return eventService.getEventById(eventId);
+    }
+
     // Organizer view own events
     @GetMapping("/organizer/{organizerId}")
     public List<Event> getOrganizerEvents(@PathVariable String organizerId) {

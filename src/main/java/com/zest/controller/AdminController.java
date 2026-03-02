@@ -21,6 +21,7 @@ import com.zest.model.User;
 import com.zest.repository.BookingRepository;
 import com.zest.repository.EventRepository;
 import com.zest.repository.UserRepository;
+import com.zest.service.CacheManagementService;
 import com.zest.service.EmailService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class AdminController {
     private final EventRepository eventRepository;
     private final BookingRepository bookingRepository;
     private final EmailService emailService;
+    private final CacheManagementService cacheManagementService;
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
@@ -45,6 +47,28 @@ public class AdminController {
                 .stream()
                 .filter(user -> user.getRole().name().equals("USER"))
                 .toList();
+    }
+
+    @PostMapping("/cache/clear-all")
+    public ResponseEntity<String> clearAllCaches() {
+        try {
+            cacheManagementService.clearAllCaches();
+            return ResponseEntity.ok("All caches cleared successfully");
+        } catch (Exception e) {
+            log.error("Error clearing all caches: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body("Failed to clear caches");
+        }
+    }
+
+    @PostMapping("/cache/clear-events")
+    public ResponseEntity<String> clearEventCaches() {
+        try {
+            cacheManagementService.clearEventCache();
+            return ResponseEntity.ok("Event caches cleared successfully");
+        } catch (Exception e) {
+            log.error("Error clearing event caches: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body("Failed to clear event caches");
+        }
     }
 
     @GetMapping("/organizers")

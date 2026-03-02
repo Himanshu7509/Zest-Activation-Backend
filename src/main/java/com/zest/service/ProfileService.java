@@ -2,6 +2,8 @@ package com.zest.service;
 
 import java.time.LocalDateTime;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.zest.dto.ProfileResponse;
@@ -17,6 +19,7 @@ public class ProfileService {
 
     private final UserRepository userRepository;
 
+    @Cacheable(value = "user", key = "#email")
     public ProfileResponse getProfile(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
         
@@ -27,6 +30,7 @@ public class ProfileService {
         return mapToProfileResponse(user);
     }
 
+    @CacheEvict(value = "user", key = "#email")
     public ProfileResponse updateProfile(String email, ProfileUpdateRequest request) {
         User user = userRepository.findByEmail(email).orElse(null);
         
