@@ -144,7 +144,6 @@ public class AdminController {
         return dashboard;
     }
 
-    // 1️⃣ Block / Unblock User
     @PutMapping("/users/{id}/block")
     public ResponseEntity<String> toggleBlockUser(@PathVariable String id) {
 
@@ -169,7 +168,6 @@ public class AdminController {
     event.setStatus("ACTIVE");
     eventRepository.save(event);
     
-    // Get the organizer to send email notification
     User organizer = userRepository.findById(event.getOrganizerId()).orElse(null);
     if (organizer != null) {
         log.info("Triggering event approval notification email for: {}", organizer.getEmail());
@@ -184,7 +182,6 @@ public class AdminController {
     return ResponseEntity.ok("Event approved successfully");
 }
 
-    // 3️⃣ Delete Event
     @DeleteMapping("/events/{id}")
     public ResponseEntity<String> deleteEvent(@PathVariable String id) {
 
@@ -197,7 +194,6 @@ public class AdminController {
         return ResponseEntity.ok("Event deleted successfully");
     }
 
-    // 4️⃣ Change Event Status
     @PutMapping("/events/{id}/status")
     public ResponseEntity<String> changeEventStatus(
             @PathVariable String id,
@@ -229,7 +225,6 @@ public class AdminController {
     event.setStatus("REJECTED");
     eventRepository.save(event);
     
-    // Get the organizer to send email notification
     User organizer = userRepository.findById(event.getOrganizerId()).orElse(null);
     if (organizer != null) {
         log.info("Triggering event rejection notification email for: {}", organizer.getEmail());

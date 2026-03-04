@@ -55,13 +55,10 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // ✅ Allow ALL origins
         configuration.setAllowedOriginPatterns(List.of("*"));
 
-        // ✅ Allow ALL methods
         configuration.setAllowedMethods(List.of("*"));
 
-        // ✅ Allow ALL headers
         configuration.setAllowedHeaders(List.of("*"));
 
         configuration.setAllowCredentials(true);

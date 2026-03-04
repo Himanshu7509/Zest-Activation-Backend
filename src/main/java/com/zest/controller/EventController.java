@@ -33,7 +33,6 @@ public class EventController {
     @Autowired(required = false)
     private EventImageS3Service eventImageS3Service;
 
-    // Organizer create event
     @PostMapping("/{organizerId}")
     public Event createEvent(@RequestBody Event event,
                              @PathVariable String organizerId) {
@@ -55,25 +54,21 @@ public class EventController {
         return ResponseEntity.ok("Image uploaded successfully");
     }
 
-    // Public view all events
     @GetMapping
     public List<Event> getAllEvents() {
         return eventService.getAllEvents();
     }
 
-    // Public view event by ID
     @GetMapping("/{eventId}")
     public Event getEventById(@PathVariable String eventId) {
         return eventService.getEventById(eventId);
     }
 
-    // Organizer view own events
     @GetMapping("/organizer/{organizerId}")
     public List<Event> getOrganizerEvents(@PathVariable String organizerId) {
         return eventService.getEventsByOrganizer(organizerId);
     }
 
-    // Delete event
     @DeleteMapping("/{eventId}")
     public void deleteEvent(@PathVariable String eventId) {
         eventService.deleteEvent(eventId);

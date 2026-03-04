@@ -21,9 +21,7 @@ public class PasswordGenerator implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Check if admin user already exists
         if (userRepository.findByRole(Role.ADMIN).isEmpty()) {
-            // Create default admin user
             User admin = new User();
             admin.setName("Admin User");
             admin.setEmail("admin@zest.com");

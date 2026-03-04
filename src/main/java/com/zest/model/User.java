@@ -30,7 +30,6 @@ public class User {
 
     private LocalDateTime createdAt = LocalDateTime.now();
     
-    // Profile fields
     private String profileImageUrl;
     private String profileImageS3Key;
     private String phoneNumber;

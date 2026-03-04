@@ -22,7 +22,6 @@ public class BookingController {
 
     private final BookingService bookingService;
 
-    // USER books event
     @PostMapping("/{userId}/{eventId}")
     public Booking bookEvent(
             @PathVariable String userId,
@@ -31,8 +30,7 @@ public class BookingController {
     ) {
         return bookingService.bookEvent(userId, eventId, quantity);
     }
-
-    // USER sees own bookings
+    
     @GetMapping("/user/{userId}")
     public List<Booking> getUserBookings(@PathVariable String userId) {
         return bookingService.getUserBookings(userId);

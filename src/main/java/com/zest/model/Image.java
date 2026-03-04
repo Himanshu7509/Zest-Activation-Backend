@@ -20,7 +20,7 @@ public class Image {
     @Id
     private String id;
     
-    private String entityId;      // ID of the entity this image belongs to (e.g., event ID)
+    private String entityId;      
     private String entityType;    // Type of entity (e.g., "EVENT", "USER", etc.)
     private String imageUrl;
     private String imageS3Key;

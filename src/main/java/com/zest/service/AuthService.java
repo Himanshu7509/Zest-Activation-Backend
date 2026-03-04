@@ -47,7 +47,6 @@ public class AuthService {
 
         userRepository.save(user);
 
-        // Send registration confirmation email
         log.info("Triggering registration confirmation email for: {}", user.getEmail());
         boolean emailSent = emailService.sendRegistrationConfirmation(user.getEmail(), user.getName());
         if (emailSent) {
@@ -89,13 +88,11 @@ public class AuthService {
     }
 
     public String createAdminUser() {
-        // Check if admin already exists
         List<User> admins = userRepository.findByRole(Role.ADMIN);
         if (!admins.isEmpty()) {
             throw new RuntimeException("Admin user already exists");
         }
 
-        // Use a default password
         String defaultPassword = "admin123";
         
         User admin = new User();

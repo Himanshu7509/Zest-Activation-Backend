@@ -32,7 +32,7 @@ public class ProfileController {
 
     @GetMapping
     public ResponseEntity<ProfileResponse> getProfile(Authentication authentication) {
-        String userId = authentication.getName(); // This will be the email from JWT
+        String userId = authentication.getName();
         log.info("Fetching profile for user: {}", userId);
         
         try {
