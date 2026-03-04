@@ -1,6 +1,7 @@
 
 package com.zest.controller;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/health")
 @RequiredArgsConstructor
 @Slf4j
+@ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis", matchIfMissing = false)
 public class HealthController {
 
     private final RedisTemplate<String, Object> redisTemplate;
