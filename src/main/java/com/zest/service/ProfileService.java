@@ -12,15 +12,18 @@ import com.zest.model.User;
 import com.zest.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProfileService {
 
     private final UserRepository userRepository;
 
     @Cacheable(value = "user", key = "#email")
     public ProfileResponse getProfile(String email) {
+        log.info("Fetching profile from database for user: {}", email);
         User user = userRepository.findByEmail(email).orElse(null);
         
         if (user == null) {
@@ -32,6 +35,7 @@ public class ProfileService {
 
     @CacheEvict(value = "user", key = "#email")
     public ProfileResponse updateProfile(String email, ProfileUpdateRequest request) {
+        log.info("Updating profile and evicting cache for user: {}", email);
         User user = userRepository.findByEmail(email).orElse(null);
         
         if (user == null) {
@@ -57,6 +61,7 @@ public class ProfileService {
 
         user.setUpdatedAt(LocalDateTime.now());
         User updatedUser = userRepository.save(user);
+        log.info("Profile updated successfully for user: {}. Cache will be evicted.", email);
 
         return mapToProfileResponse(updatedUser);
     }
