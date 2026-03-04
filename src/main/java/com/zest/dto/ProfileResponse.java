@@ -1,5 +1,7 @@
 package com.zest.dto;
 
+import java.time.LocalDateTime;
+
 import com.zest.model.Role;
 
 import lombok.Data;
@@ -16,6 +18,6 @@ public class ProfileResponse {
     private String location;
     private Boolean isActive;
     private Boolean approved;
-   // private LocalDateTime createdAt;
-   // private LocalDateTime updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
