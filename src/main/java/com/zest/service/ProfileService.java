@@ -85,7 +85,7 @@ public class ProfileService {
         response.setIsActive(user.getIsActive());
         response.setApproved(user.getApproved());
        // response.setCreatedAt(user.getCreatedAt());
-        response.setUpdatedAt(user.getUpdatedAt());
+       // response.setUpdatedAt(user.getUpdatedAt());
         return response;
     }
 }
