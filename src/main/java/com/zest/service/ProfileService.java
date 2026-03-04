@@ -24,13 +24,19 @@ public class ProfileService {
     @Cacheable(value = "user", key = "#email")
     public ProfileResponse getProfile(String email) {
         log.info("Fetching profile from database for user: {}", email);
-        User user = userRepository.findByEmail(email).orElse(null);
-        
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
+        try {
+            User user = userRepository.findByEmail(email).orElse(null);
+            
+            if (user == null) {
+                throw new RuntimeException("User not found");
+            }
 
-        return mapToProfileResponse(user);
+            log.info("Successfully fetched profile for user: {} from database", email);
+            return mapToProfileResponse(user);
+        } catch (Exception e) {
+            log.error("Error fetching profile from database for user {}: {}", email, e.getMessage());
+            throw e;
+        }
     }
 
     @CacheEvict(value = "user", key = "#email")

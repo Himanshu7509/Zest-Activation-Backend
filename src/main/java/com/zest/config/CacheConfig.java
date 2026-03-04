@@ -24,7 +24,7 @@ public class CacheConfig {
 
     @Bean
     @Primary
-    @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis", matchIfMissing = true)
+    @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis", matchIfMissing = false)
     public CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
         log.info("Configuring Redis Cache Manager");
         RedisCacheConfiguration config = 
