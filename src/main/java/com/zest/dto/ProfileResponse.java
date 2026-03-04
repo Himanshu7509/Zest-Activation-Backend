@@ -18,6 +18,6 @@ public class ProfileResponse {
     private String location;
     private Boolean isActive;
     private Boolean approved;
-    private LocalDateTime createdAt;
+   // private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
