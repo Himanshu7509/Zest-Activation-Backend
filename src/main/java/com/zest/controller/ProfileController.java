@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,12 +24,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/profile")
-@RequiredArgsConstructor
 @Slf4j
 public class ProfileController {
 
     private final ProfileService profileService;
-    private final ProfileImageS3Service profileImageS3Service;
+    
+    @Autowired(required = false)
+    private ProfileImageS3Service profileImageS3Service;
 
     @GetMapping
     public ResponseEntity<ProfileResponse> getProfile(Authentication authentication) {
