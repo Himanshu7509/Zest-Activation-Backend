@@ -8,11 +8,6 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@ConditionalOnProperty(
-    name = "spring.cache.type",
-    havingValue = "redis",
-    matchIfMissing = false
-)
 @Slf4j
 public class CacheManagementService {
 
