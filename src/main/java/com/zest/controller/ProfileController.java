@@ -27,7 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ProfileController {
 
-    private final ProfileService profileService;
+	@Autowired
+    private ProfileService profileService;
     
     @Autowired(required = false)
     private ProfileImageS3Service profileImageS3Service;
